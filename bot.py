@@ -6,9 +6,9 @@ from telegram.ext import (
     Updater,
     CommandHandler,
     MessageHandler,
-    Filters,
     CallbackContext,
-    CallbackQueryHandler
+    CallbackQueryHandler,
+    filters
 )
 
 # Use environment variable for token in production, fallback to your test token
@@ -80,13 +80,13 @@ def error_handler(update: Update, context: CallbackContext) -> None:
         update.message.reply_text("❌ An error occurred. Please try again or contact support.")
 
 def main() -> None:
-    updater = Updater(TOKEN, use_context=True)
+    updater = Updater(TOKEN)
     dispatcher = updater.dispatcher
 
     # Register handlers
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CallbackQueryHandler(handle_verification, pattern="^verify$"))
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_solana_address))
+    dispatcher.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_solana_address))
     
     # Error handler
     dispatcher.add_error_handler(error_handler)
